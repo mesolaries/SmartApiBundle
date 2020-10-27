@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
+        http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="mesolaries_smart_api.request.smart_request" class="Mesolaries\SmartApiBundle\Request\SmartRequest"
+                 public="false">
+            <argument type="service" id="validator"/>
+            <argument type="service" id="property_accessor"/>
+            <argument type="service" id="request_stack"/>
+        </service>
+
+        <service id="Mesolaries\SmartApiBundle\Request\SmartRequest" alias="mesolaries_smart_api.request.smart_request"
+                 public="false"/>
+
+        <service id="mesolaries_smart_api.event_listener.smart_problem_exception_listener"
+                 class="Mesolaries\SmartApiBundle\EventListener\SmartProblemExceptionListener" public="false">
+            <argument>%kernel.debug%</argument>
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <service id="Mesolaries\SmartApiBundle\EventListener\SmartProblemExceptionListener"
+                 alias="mesolaries_smart_api.event_listener.smart_problem_exception_listener" public="false"/>
+    </services>
+</container>
