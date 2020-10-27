@@ -1,3 +1,11 @@
+Smart API Bundle
+============
+This package provides a RESTful development helper services for Symfony. 
+
+There are two main services for now. Read detailed docs for each service below:
+- [SmartRequest](Request/README.md)
+- [SmartProblem](Problem/README.md) 
+
 Installation
 ============
 
