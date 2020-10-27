@@ -1,3 +1,7 @@
+
+[![GitHub issues](https://img.shields.io/github/issues/mesolaries/SmartApiBundle)](https://github.com/mesolaries/SmartApiBundle/issues)
+[![GitHub license](https://img.shields.io/github/license/mesolaries/SmartApiBundle)](https://github.com/mesolaries/SmartApiBundle/blob/main/LICENSE)
+
 Smart API Bundle
 ============
 This package provides a RESTful development helper services for Symfony. 
