@@ -24,7 +24,7 @@ interface SmartRequestRuleInterface
      *
      * @return array
      */
-    public function getValidationMap(): array;
+    public function getValidationMap();
 
     /**
      * Runs every time after validation succeeded.

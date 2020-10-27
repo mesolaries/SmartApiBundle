@@ -57,7 +57,7 @@ class SmartProblemExceptionListener implements EventSubscriberInterface
         }
 
         if ($e instanceof HttpExceptionInterface && !($e instanceof SmartProblemException)) {
-            $smartProblem->addExtraData('details', $e->getMessage());
+            $smartProblem->addExtraData('detail', $e->getMessage());
         }
 
         $response = new JsonResponse($smartProblem->normalize(), $smartProblem->getStatusCode());
