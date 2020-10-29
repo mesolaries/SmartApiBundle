@@ -111,13 +111,17 @@ class SmartRequest
             }
 
             if (0 !== count($violations)) {
-                $this->validationErrors[$key] = [];
+                if (!$violations[0]->getPropertyPath()) {
+                    $this->validationErrors[$key] = $violations[0]->getMessage();
+                } else {
+                    $this->validationErrors[$key] = [];
 
-                $this->propertyAccessor->setValue(
-                    $this->validationErrors[$key],
-                    $violations[0]->getPropertyPath(),
-                    $violations[0]->getMessage()
-                );
+                    $this->propertyAccessor->setValue(
+                        $this->validationErrors[$key],
+                        $violations[0]->getPropertyPath(),
+                        $violations[0]->getMessage()
+                    );
+                }
             }
         }
 
