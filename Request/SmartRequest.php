@@ -96,7 +96,7 @@ class SmartRequest
         }
 
         foreach ($validationMap as $key => $value) {
-            if (!isset($requestContent[$key])) {
+            if (!array_key_exists($key, $requestContent)) {
                 if ($skipMissing) {
                     continue;
                 } else {
