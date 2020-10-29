@@ -63,6 +63,10 @@ class SmartProblemExceptionListener implements EventSubscriberInterface
         $response = new JsonResponse($smartProblem->normalize(), $smartProblem->getStatusCode());
         $response->headers->set('Content-Type', 'application/problem+json');
 
+        foreach ($e->getHeaders() as $key => $value) {
+            $response->headers->set($key, $value);
+        }
+
         $event->setResponse($response);
     }
 
