@@ -9,6 +9,7 @@
             <argument type="service" id="validator"/>
             <argument type="service" id="property_accessor"/>
             <argument type="service" id="request_stack"/>
+            <argument>%kernel.debug%</argument>
         </service>
 
         <service id="Mesolaries\SmartApiBundle\Request\SmartRequest" alias="mesolaries_smart_api.request.smart_request"

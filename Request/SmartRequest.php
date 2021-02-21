@@ -46,14 +46,11 @@ class SmartRequest
     private $request;
 
     /**
-     * @var KernelInterface
-     */
-    private $kernel;
-
-    /**
      * @var ?SmartRequestRuleInterface
      */
     private $requestRule = null;
+
+    private $isDebug;
 
     private $requestContent = [];
 
@@ -72,13 +69,13 @@ class SmartRequest
         ValidatorInterface $validator,
         PropertyAccessorInterface $propertyAccessor,
         RequestStack $requestStack,
-        KernelInterface $kernel
+        bool $isDebug
     ) {
         $this->validator        = $validator;
         $this->propertyAccessor = $propertyAccessor;
         $this->request          = $requestStack->getCurrentRequest();
         $this->requestContent   = $this->requestContentInitial = $this->parseRequestContent($this->request);
-        $this->kernel           = $kernel;
+        $this->isDebug          = $isDebug;
     }
 
     /**
@@ -100,7 +97,7 @@ class SmartRequest
         $requestContent = $this->requestContent;
 
         if ($differ = array_diff_key($requestContent, $validationMap)) {
-            if ($this->kernel->getEnvironment() !== 'prod') {
+            if ($this->isDebug) {
                 $smartProblem =
                     new SmartProblem(400, null, 'Undefined parameters were found in the request structure.');
                 $smartProblem->addExtraData('undefined-params', array_keys($differ));
@@ -116,7 +113,7 @@ class SmartRequest
                 if ($skipMissing) {
                     continue;
                 } else {
-                    if ($this->kernel->getEnvironment() !== 'prod') {
+                    if ($this->isDebug) {
                         $smartProblem =
                             new SmartProblem(400, null, 'Required parameter was not found in the request structure.');
                         $smartProblem->addExtraData('missing-param', $key);
