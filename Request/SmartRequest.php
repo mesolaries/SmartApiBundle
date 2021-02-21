@@ -18,6 +18,7 @@ use Mesolaries\SmartApiBundle\Problem\SmartProblem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -45,6 +46,11 @@ class SmartRequest
     private $request;
 
     /**
+     * @var KernelInterface
+     */
+    private $kernel;
+
+    /**
      * @var ?SmartRequestRuleInterface
      */
     private $requestRule = null;
@@ -65,12 +71,14 @@ class SmartRequest
     public function __construct(
         ValidatorInterface $validator,
         PropertyAccessorInterface $propertyAccessor,
-        RequestStack $requestStack
+        RequestStack $requestStack,
+        KernelInterface $kernel
     ) {
-        $this->validator = $validator;
+        $this->validator        = $validator;
         $this->propertyAccessor = $propertyAccessor;
-        $this->request = $requestStack->getCurrentRequest();
-        $this->requestContent = $this->requestContentInitial = $this->parseRequestContent($this->request);
+        $this->request          = $requestStack->getCurrentRequest();
+        $this->requestContent   = $this->requestContentInitial = $this->parseRequestContent($this->request);
+        $this->kernel           = $kernel;
     }
 
     /**
@@ -88,10 +96,18 @@ class SmartRequest
     {
         $this->requestRule = $requestRule;
 
-        $validationMap = $this->requestRule->getValidationMap();
+        $validationMap  = $this->requestRule->getValidationMap();
         $requestContent = $this->requestContent;
 
-        if (array_diff_key($requestContent, $validationMap)) {
+        if ($differ = array_diff_key($requestContent, $validationMap)) {
+            if ($this->kernel->getEnvironment() !== 'prod') {
+                $smartProblem =
+                    new SmartProblem(400, null, 'Undefined parameters were found in the request structure.');
+                $smartProblem->addExtraData('undefined-params', array_keys($differ));
+
+                throw new SmartProblemException($smartProblem);
+            }
+
             throw new BadRequestHttpException('Undefined parameters were found in the request structure.');
         }
 
@@ -100,6 +116,14 @@ class SmartRequest
                 if ($skipMissing) {
                     continue;
                 } else {
+                    if ($this->kernel->getEnvironment() !== 'prod') {
+                        $smartProblem =
+                            new SmartProblem(400, null, 'Required parameter was not found in the request structure.');
+                        $smartProblem->addExtraData('missing-param', $key);
+
+                        throw new SmartProblemException($smartProblem);
+                    }
+
                     throw new BadRequestHttpException('Required parameter was not found in the request structure.');
                 }
             }
