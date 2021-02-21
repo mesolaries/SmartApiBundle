@@ -100,7 +100,7 @@ class SmartRequest
             if ($this->isDebug) {
                 $smartProblem =
                     new SmartProblem(400, null, 'Undefined parameters were found in the request structure.');
-                $smartProblem->addExtraData('undefined-params', array_keys($differ));
+                $smartProblem->addExtraData('errors', $differ);
 
                 throw new SmartProblemException($smartProblem);
             }
@@ -116,7 +116,7 @@ class SmartRequest
                     if ($this->isDebug) {
                         $smartProblem =
                             new SmartProblem(400, null, 'Required parameter was not found in the request structure.');
-                        $smartProblem->addExtraData('missing-param', $key);
+                        $smartProblem->addExtraData('errors', $key);
 
                         throw new SmartProblemException($smartProblem);
                     }

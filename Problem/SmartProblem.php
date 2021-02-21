@@ -12,6 +12,7 @@
 
 namespace Mesolaries\SmartApiBundle\Problem;
 
+use Symfony\Component\DependencyInjection\Parameter;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -41,15 +42,20 @@ class SmartProblem
     public function __construct(int $statusCode, ?string $type = null, ?string $title = null)
     {
         $this->statusCode = $statusCode;
+        $originalTitle    = $title;
 
-        if ($type === null) {
-            $type = 'about:blank';
+        if (null === $type) {
+            $type  = 'about:blank';
             $title =
                 isset(Response::$statusTexts[$statusCode]) ? Response::$statusTexts[$statusCode]
                     : 'Unknown status code :(';
+
+            if (null !== $originalTitle) {
+                $this->addExtraData('detail', $originalTitle);
+            }
         }
 
-        $this->type = $type;
+        $this->type  = $type;
         $this->title = $title ?? '';
     }
 
@@ -93,8 +99,8 @@ class SmartProblem
         return array_merge(
             [
                 'status' => $this->statusCode,
-                'type' => $this->type,
-                'title' => $this->title,
+                'type'   => $this->type,
+                'title'  => $this->title,
             ],
             $this->extraData
         );
