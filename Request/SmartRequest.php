@@ -18,7 +18,6 @@ use Mesolaries\SmartApiBundle\Problem\SmartProblem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -271,10 +270,18 @@ class SmartRequest
     /**
      * @param Request $request
      *
-     * @return mixed
+     * @return array
      */
-    private function parseRequestContent(Request $request)
+    private function parseRequestContent(Request $request): array
     {
+        if ('json' !== $request->getContentType()) {
+            if ($request->getMethod() === 'GET') {
+                return $request->query->all();
+            }
+
+            return $request->request->all();
+        }
+
         $content = json_decode($request->getContent(), true);
 
         if (null === $content) {
