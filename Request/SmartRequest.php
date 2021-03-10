@@ -239,11 +239,11 @@ class SmartRequest
 
     public function getFromBag(string $key)
     {
-        if (isset($this->bag[$key])) {
-            return $this->bag[$key];
+        if (!array_key_exists($key, $this->bag)) {
+            throw new \OutOfRangeException(sprintf('There is no value associated with the key "%s".', $key));
         }
 
-        return null;
+        return $this->bag[$key];
     }
 
     public function getBag(): array
