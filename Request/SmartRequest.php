@@ -251,6 +251,13 @@ class SmartRequest
         return $this->bag;
     }
 
+    public function setBag(array $bag): SmartRequest
+    {
+        $this->bag = $bag;
+
+        return $this;
+    }
+
     /**
      * Runs `process` method of the SmartRequestRule and processors for every single field if exists
      *
