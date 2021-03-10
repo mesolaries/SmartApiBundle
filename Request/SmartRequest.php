@@ -20,6 +20,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Exception\BadMethodCallException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -152,6 +153,7 @@ class SmartRequest
             throw new SmartProblemException($smartProblem);
         }
 
+        $this->runNormalizers();
         $this->runProcessors();
 
         return $this->requestContent;
@@ -263,6 +265,33 @@ class SmartRequest
         foreach ($this->requestContent as $key => $value) {
             if (isset($validationMap[$key]['processor']) && is_callable($validationMap[$key]['processor'])) {
                 call_user_func($validationMap[$key]['processor'], $this);
+            }
+        }
+    }
+
+    /**
+     * Replaces the request parameter with the return value of the PHP callable
+     *
+     * @return void
+     */
+    private function runNormalizers()
+    {
+        $validationMap = $this->requestRule->getValidationMap();
+
+        foreach ($this->requestContent as $key => $value) {
+            if (isset($validationMap[$key]['normalizer'])) {
+                $normalizer = $validationMap[$key]['normalizer'];
+
+                if (!is_callable($normalizer)) {
+                    throw new \InvalidArgumentException(
+                        sprintf(
+                            'The "normalizer" option must be a valid callable ("%s" given).',
+                            is_object($normalizer) ? get_class($normalizer) : gettype($normalizer)
+                        )
+                    );
+                }
+
+                $this->requestContent[$key] = call_user_func($normalizer, $value);
             }
         }
     }
