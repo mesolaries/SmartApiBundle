@@ -11,7 +11,8 @@ Only following `Content-Type`s supported for now:
 - [Defining a RequestRule](#defining-a-requestrule)  
 - [Using the RequestRule](#using-the-requestrule)      
 - [Validating without RequestRule](#validating-without-requestrule) 
-- [Complex request structures](#complex-request-structures)   
+- [Complex request structures](#complex-request-structures)  
+- [Additional methods](#additional-methods)
 
 How it works
 ============
@@ -42,6 +43,7 @@ class SomeRequestRule extends AbstractSmartRequestRule
                 'constraints' => [
                     new NotBlank(),
                 ],
+                'normalizer' => 'trim',
                 'processor' => [$this, 'nameProcessor'],
             ],
             'surname' => [
@@ -80,6 +82,15 @@ Array keys here are the corresponding parameter keys in the request body content
     
     The value has to be a `callable`.
     An instance of `SmartRequest` will be passed as an argument.
+- `normalizer` key is optional.
+    
+    This option allows to define the PHP callable applied to the given value.
+
+    For example, you may want to pass the 'trim' string to apply the `trim`
+    PHP function. 
+    
+    _Note that the original request parameter will be replaced by the 
+    return value of the PHP callable._
 
 #### `process()` method:
 This method is optional. 
@@ -268,6 +279,69 @@ class SomeRequestRule extends AbstractSmartRequestRule
                 ]
             ]
         ];
+    }
+}
+```
+
+<a name="additional-methods"></a>
+### Additional methods
+
+There are also some helpful methods that can help you in some situations.
+
+Some of them are listed below:
+
+#### Parameter bag
+
+You can use parameter bag to save some values for further processing.
+
+For example, you can add a value to the bag in the RequestRule:
+
+```php
+<?php
+
+use Mesolaries\SmartApiBundle\Request\AbstractSmartRequestRule;
+use Mesolaries\SmartApiBundle\Request\SmartRequest;
+
+class SomeRequestRule extends AbstractSmartRequestRule
+{
+    public function getValidationMap()
+    {
+        // ...
+    }
+
+    public function process(SmartRequest $smartRequest)
+    {
+        // ...
+        // Add to bag by key
+        $smartRequest->addToBag('foo', 'bar');
+        // Or you can set the whole bag as array
+        $smartRequest->setBag(['foo' => 'bar']);
+        // ...
+    }
+}
+```
+
+...and retrieve the value in the Controller:
+
+```php
+<?php
+
+use Symfony\Component\Routing\Annotation\Route;
+use Mesolaries\SmartApiBundle\Request\SmartRequest;
+
+class SomeController
+{
+    /**
+     * @Route("/", name="app.index")
+     */
+    public function index(SmartRequest $smartRequest)
+    {
+        // ...
+        // Retrieve a value by key
+        $foo = $smartRequest->getFromBag('foo');
+        // Or get the whole bag as array
+        $bag = $smartRequest->getBag();
+        // ...
     }
 }
 ```
