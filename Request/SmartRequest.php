@@ -263,8 +263,19 @@ class SmartRequest
         $validationMap = $this->requestRule->getValidationMap();
 
         foreach ($this->requestContent as $key => $value) {
-            if (isset($validationMap[$key]['processor']) && is_callable($validationMap[$key]['processor'])) {
-                call_user_func($validationMap[$key]['processor'], $this);
+            if (isset($validationMap[$key]['processor'])) {
+                $processor = $validationMap[$key]['processor'];
+
+                if (!is_callable($processor)) {
+                    throw new \InvalidArgumentException(
+                        sprintf(
+                            'The "processor" option must be a valid callable ("%s" given).',
+                            is_object($processor) ? get_class($processor) : gettype($processor)
+                        )
+                    );
+                }
+
+                call_user_func($processor, $this);
             }
         }
     }
