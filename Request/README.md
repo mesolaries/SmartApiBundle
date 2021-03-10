@@ -87,7 +87,7 @@ Array keys here are the corresponding parameter keys in the request body content
     This option allows to define the PHP callable applied to the given value.
 
     For example, you may want to pass the 'trim' string to apply the `trim`
-    PHP function. 
+    PHP function. It'll run after validation but before processors.
     
     _Note that the original request parameter will be replaced by the 
     return value of the PHP callable._
