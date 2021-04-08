@@ -1,6 +1,8 @@
 
-[![GitHub issues](https://img.shields.io/github/issues/mesolaries/SmartApiBundle)](https://github.com/mesolaries/SmartApiBundle/issues)
-[![GitHub license](https://img.shields.io/github/license/mesolaries/SmartApiBundle)](https://github.com/mesolaries/SmartApiBundle/blob/main/LICENSE)
+[![Latest Stable Version](https://poser.pugx.org/mesolaries/smart-api-bundle/v)](https://packagist.org/packages/mesolaries/smart-api-bundle) 
+[![Total Downloads](https://poser.pugx.org/mesolaries/smart-api-bundle/downloads)](https://packagist.org/packages/mesolaries/smart-api-bundle)
+[![GitHub Issues](https://img.shields.io/github/issues/mesolaries/SmartApiBundle)](https://github.com/mesolaries/SmartApiBundle/issues)
+[![License](https://img.shields.io/github/license/mesolaries/SmartApiBundle)](https://github.com/mesolaries/SmartApiBundle/blob/main/LICENSE)
 
 Smart API Bundle
 ============
