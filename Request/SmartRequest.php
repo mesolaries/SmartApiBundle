@@ -20,7 +20,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Exception\BadMethodCallException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -256,6 +255,11 @@ class SmartRequest
         $this->bag = $bag;
 
         return $this;
+    }
+
+    public function getValidator(): ValidatorInterface
+    {
+        return $this->validator;
     }
 
     /**
