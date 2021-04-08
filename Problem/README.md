@@ -32,7 +32,9 @@ class SomeController
 }
 ```
 
-When the controller format is a `json` or 
+When the controller format is a `json`, 
+the request `Accept` header first value 
+contains `json` (i.e `Accept: application/json, text/html`) or 
 the request `Content-Type` is `*/json`,  
 the `kernel.exception` listener will run.
 
