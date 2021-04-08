@@ -33,8 +33,8 @@ class SmartProblemException extends HttpException
         ?int $code = 0
     ) {
         $this->smartProblem = $smartProblem;
-        $statusCode = $smartProblem->getStatusCode();
-        $message = $smartProblem->getTitle();
+        $statusCode         = $smartProblem->getStatusCode();
+        $message            = $smartProblem->getTitle();
 
         parent::__construct($statusCode, $message, $previous, $headers, $code);
     }

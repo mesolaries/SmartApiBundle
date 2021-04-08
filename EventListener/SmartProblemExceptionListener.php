@@ -37,7 +37,7 @@ class SmartProblemExceptionListener implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
-        if (false === mb_strpos($request->getRequestFormat(), 'json') &&
+        if (false === mb_strpos((string)$request->getPreferredFormat(), 'json') &&
             false === mb_strpos((string)$request->getContentType(), 'json')) {
             return;
         }
@@ -46,7 +46,7 @@ class SmartProblemExceptionListener implements EventSubscriberInterface
 
         $statusCode = $e instanceof HttpExceptionInterface ? $e->getStatusCode() : 500;
 
-        if ($statusCode == 500 && $this->debug) {
+        if ($this->debug && $statusCode >= 500) {
             return;
         }
 
@@ -54,10 +54,16 @@ class SmartProblemExceptionListener implements EventSubscriberInterface
             $smartProblem = $e->getSmartProblem();
         } else {
             $smartProblem = new SmartProblem($statusCode);
-        }
 
-        if ($e instanceof HttpExceptionInterface && !($e instanceof SmartProblemException)) {
-            $smartProblem->addExtraData('detail', $e->getMessage());
+            /*
+             * If it's an HttpException message (e.g. for 404, 403),
+             * we'll say as a rule that the exception message is safe
+             * for the client. Otherwise, it could be some sensitive
+             * low-level exception, which should *not* be exposed
+             */
+            if ($e instanceof HttpExceptionInterface) {
+                $smartProblem->addExtraData('detail', $e->getMessage());
+            }
         }
 
         $response = new JsonResponse($smartProblem->normalize(), $smartProblem->getStatusCode());
@@ -73,7 +79,7 @@ class SmartProblemExceptionListener implements EventSubscriberInterface
     /**
      * @inheritDoc
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             KernelEvents::EXCEPTION => 'onKernelException',

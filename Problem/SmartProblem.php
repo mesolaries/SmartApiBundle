@@ -12,7 +12,6 @@
 
 namespace Mesolaries\SmartApiBundle\Problem;
 
-use Symfony\Component\DependencyInjection\Parameter;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
