@@ -18,6 +18,7 @@
         <service id="mesolaries_smart_api.event_listener.smart_problem_exception_listener"
                  class="Mesolaries\SmartApiBundle\EventListener\SmartProblemExceptionListener" public="false">
             <argument>%kernel.debug%</argument>
+            <argument></argument> <!-- will be filled in with pattern dynamically -->
             <tag name="kernel.event_subscriber"/>
         </service>
 

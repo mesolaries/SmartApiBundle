@@ -28,18 +28,23 @@ class SmartProblemExceptionListener implements EventSubscriberInterface
 {
     private $debug;
 
-    public function __construct($debug)
+    private $pattern;
+
+    public function __construct($debug, $pattern)
     {
-        $this->debug = $debug;
+        $this->debug   = $debug;
+        $this->pattern = $pattern;
     }
 
     public function onKernelException(ExceptionEvent $event)
     {
         $request = $event->getRequest();
 
-        if (false === mb_strpos((string)$request->getPreferredFormat(), 'json') &&
-            false === mb_strpos((string)$request->getContentType(), 'json')) {
-            return;
+        if (null === $this->pattern || !preg_match('{' . $this->pattern . '}', rawurldecode($request->getPathInfo()))) {
+            if (false === mb_strpos((string)$request->getPreferredFormat(), 'json') &&
+                false === mb_strpos((string)$request->getContentType(), 'json')) {
+                return;
+            }
         }
 
         $e = $event->getThrowable();

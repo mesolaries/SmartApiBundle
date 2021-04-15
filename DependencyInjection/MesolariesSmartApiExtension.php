@@ -30,5 +30,16 @@ class MesolariesSmartApiExtension extends Extension
     {
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.xml');
+
+        $configuration = new Configuration();
+        $config = $this->processConfiguration($configuration, $configs);
+
+        $definition = $container->getDefinition('mesolaries_smart_api.event_listener.smart_problem_exception_listener');
+        $definition->replaceArgument(1, $config['smart_problem']['pattern']);
+    }
+
+    public function getNamespace(): string
+    {
+        return 'http://mesolaries.com/schema/dic/smart_api';
     }
 }
