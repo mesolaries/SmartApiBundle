@@ -33,9 +33,10 @@ class SomeController
 }
 ```
 
-When the controller format is a `json`, the request `Accept` header first value contains `json` (
-i.e `Accept: application/json, text/html`) or the request `Content-Type` is `*/json`,  
-the `kernel.exception` listener will run.
+When the controller format is a `json`, 
+the request `Accept` header first value contains `json` (i.e `Accept: application/json, text/html`) 
+or the request `Content-Type` is `*/json`, 
+the `kernel.exception` listener will run. 
 
 Also, you can define *a url pattern* which will **ignore** conditions above.
 
@@ -67,8 +68,9 @@ Body:
 }
 ```
 
-You can also use any Exceptions from `Symfony\Component\HttpKernel\Exception\HttpExceptionInterface`. Then, the response
-will be as following:
+You can also use any Exceptions from `Symfony\Component\HttpKernel\Exception\HttpExceptionInterface`. 
+
+Then, the response will be as following:
 
 ```php
 <?php
