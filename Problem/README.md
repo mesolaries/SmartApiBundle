@@ -5,6 +5,7 @@ This service provides a [RFC7807](https://tools.ietf.org/html/rfc7807) Problem d
 
 Supported response formats
 ============
+
 - application/problem+json
 
 How it works
@@ -32,13 +33,25 @@ class SomeController
 }
 ```
 
-When the controller format is a `json`, 
-the request `Accept` header first value 
-contains `json` (i.e `Accept: application/json, text/html`) or 
-the request `Content-Type` is `*/json`,  
+When the controller format is a `json`, the request `Accept` header first value contains `json` (
+i.e `Accept: application/json, text/html`) or the request `Content-Type` is `*/json`,  
 the `kernel.exception` listener will run.
 
-It will transform the exception to following response:
+Also, you can define *a url pattern* which will **ignore** conditions above.
+
+The configuration looks like this:
+
+```yaml
+# config/packages/mesolaries_smart_api.yaml
+
+mesolaries_smart_api:
+    smart_problem:
+        pattern: ^/api
+```
+
+In the example above, all urls starting with `/api` are able to trigger `kernel.exception` listener.
+
+The listener will transform the exception to following response:
 
 Headers:
 
@@ -54,9 +67,8 @@ Body:
 }
 ```
 
-You can also use any Exceptions 
-from `Symfony\Component\HttpKernel\Exception\HttpExceptionInterface`.
-Then, the response will be as following:
+You can also use any Exceptions from `Symfony\Component\HttpKernel\Exception\HttpExceptionInterface`. Then, the response
+will be as following:
 
 ```php
 <?php
@@ -77,6 +89,7 @@ Response:
 ```
 
 If you want additional data in response you can use `addExtraData` method:
+
 ```php
 <?php
 
