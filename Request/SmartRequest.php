@@ -112,6 +112,8 @@ class SmartRequest
             }
         }
 
+        $this->runNormalizers();
+
         foreach ($validationMap as $key => $value) {
             if (!array_key_exists($key, $this->requestContent)) {
                 if ($useDefaultForMissing) {
@@ -157,7 +159,6 @@ class SmartRequest
             throw new SmartProblemException($smartProblem);
         }
 
-        $this->runNormalizers();
         $this->runProcessors();
 
         return $this->requestContent;
@@ -278,9 +279,9 @@ class SmartRequest
 
         $validationMap = $this->requestRule->getValidationMap();
 
-        foreach ($this->requestContent as $key => $value) {
-            if (isset($validationMap[$key]['processor'])) {
-                $processor = $validationMap[$key]['processor'];
+        foreach ($validationMap as $key => $value) {
+            if (array_key_exists('processor', $value)) {
+                $processor = $value['processor'];
 
                 if (!is_callable($processor)) {
                     throw new \InvalidArgumentException(sprintf('The "processor" option must be a valid callable ("%s" given).', is_object($processor) ? get_class($processor) : gettype($processor)));
@@ -300,15 +301,17 @@ class SmartRequest
     {
         $validationMap = $this->requestRule->getValidationMap();
 
-        foreach ($this->requestContent as $key => $value) {
-            if (isset($validationMap[$key]['normalizer'])) {
-                $normalizer = $validationMap[$key]['normalizer'];
+        foreach ($validationMap as $key => $value) {
+            if (array_key_exists('normalizer', $value)) {
+                $normalizer = $value['normalizer'];
 
                 if (!is_callable($normalizer)) {
                     throw new \InvalidArgumentException(sprintf('The "normalizer" option must be a valid callable ("%s" given).', is_object($normalizer) ? get_class($normalizer) : gettype($normalizer)));
                 }
 
-                $this->requestContent[$key] = call_user_func($normalizer, $value);
+                if (array_key_exists($key, $this->requestContent)) {
+                    $this->requestContent[$key] = call_user_func($normalizer, $this->requestContent[$key]);
+                }
             }
         }
     }
