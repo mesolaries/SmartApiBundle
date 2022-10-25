@@ -85,25 +85,31 @@ class SmartRequest
      *                                                        for missing fields in the Request body content
      *                                                        instead of throwing an Exception. If default
      *                                                        is not defined in the request rule, null value will be used.
+     * @param bool                      $throwOnUndefined     Controls whether to throw an exception or
+     *                                                        remove undefined parameters from the Request body content
      *
      * @return array Request body content after all manipulations
      */
-    public function comply(SmartRequestRuleInterface $requestRule, bool $useDefaultForMissing = false): array
+    public function comply(SmartRequestRuleInterface $requestRule, bool $useDefaultForMissing = false, bool $throwOnUndefined = true): array
     {
         $this->requestRule = $requestRule;
 
         $validationMap = $this->requestRule->getValidationMap();
 
         if ($differ = array_diff_key($this->requestContent, $validationMap)) {
-            if ($this->isDebug) {
-                $smartProblem =
-                    new SmartProblem(400, null, 'Undefined parameters were found in the request structure.');
-                $smartProblem->addExtraData('errors', $differ);
+            if ($throwOnUndefined) {
+                if ($this->isDebug) {
+                    $smartProblem =
+                        new SmartProblem(400, null, 'Undefined parameters were found in the request structure.');
+                    $smartProblem->addExtraData('errors', $differ);
 
-                throw new SmartProblemException($smartProblem);
+                    throw new SmartProblemException($smartProblem);
+                }
+
+                throw new BadRequestHttpException('Undefined parameters were found in the request structure.');
+            } else {
+                $this->requestContent = array_intersect_key($this->requestContent, $validationMap);
             }
-
-            throw new BadRequestHttpException('Undefined parameters were found in the request structure.');
         }
 
         foreach ($validationMap as $key => $value) {
