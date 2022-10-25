@@ -80,20 +80,21 @@ class SmartRequest
      * Validates request body content against defined constraints in the $requestRule.
      * If all data is valid `process` method of the $requestRule and processors of every single field will be executed.
      *
-     * @param SmartRequestRuleInterface $requestRule Request rule to comply with
-     * @param bool                      $skipMissing Skip missing fields in the Request body content instead of
-     *                                               throwing an Exception
+     * @param SmartRequestRuleInterface $requestRule          Request rule to comply with
+     * @param bool                      $useDefaultForMissing Use default value defined in the request rule
+     *                                                        for missing fields in the Request body content
+     *                                                        instead of throwing an Exception. If default
+     *                                                        is not defined in the request rule, null value will be used.
      *
      * @return array Request body content after all manipulations
      */
-    public function comply(SmartRequestRuleInterface $requestRule, bool $skipMissing = false): array
+    public function comply(SmartRequestRuleInterface $requestRule, bool $useDefaultForMissing = false): array
     {
         $this->requestRule = $requestRule;
 
         $validationMap = $this->requestRule->getValidationMap();
-        $requestContent = $this->requestContent;
 
-        if ($differ = array_diff_key($requestContent, $validationMap)) {
+        if ($differ = array_diff_key($this->requestContent, $validationMap)) {
             if ($this->isDebug) {
                 $smartProblem =
                     new SmartProblem(400, null, 'Undefined parameters were found in the request structure.');
@@ -106,9 +107,9 @@ class SmartRequest
         }
 
         foreach ($validationMap as $key => $value) {
-            if (!array_key_exists($key, $requestContent)) {
-                if ($skipMissing) {
-                    continue;
+            if (!array_key_exists($key, $this->requestContent)) {
+                if ($useDefaultForMissing) {
+                    $this->requestContent[$key] = array_key_exists('default', $value) ? $value['default'] : null;
                 } else {
                     if ($this->isDebug) {
                         $smartProblem =
@@ -125,7 +126,7 @@ class SmartRequest
             $violations = [];
 
             if (isset($value['constraints'])) {
-                $violations = $this->validator->validate($requestContent[$key], $value['constraints']);
+                $violations = $this->validator->validate($this->requestContent[$key], $value['constraints']);
             }
 
             if (0 !== count($violations)) {
