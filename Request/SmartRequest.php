@@ -12,7 +12,6 @@
 
 namespace Mesolaries\SmartApiBundle\Request;
 
-
 use Mesolaries\SmartApiBundle\Exception\SmartProblemException;
 use Mesolaries\SmartApiBundle\Problem\SmartProblem;
 use Symfony\Component\HttpFoundation\Request;
@@ -58,7 +57,7 @@ class SmartRequest
     private $validationErrors = [];
 
     /**
-     * A bag to carry any necessary additional data
+     * A bag to carry any necessary additional data.
      *
      * @var array
      */
@@ -70,17 +69,16 @@ class SmartRequest
         RequestStack $requestStack,
         bool $isDebug
     ) {
-        $this->validator        = $validator;
+        $this->validator = $validator;
         $this->propertyAccessor = $propertyAccessor;
-        $this->request          = $requestStack->getCurrentRequest();
-        $this->requestContent   = $this->requestContentInitial = $this->parseRequestContent($this->request);
-        $this->isDebug          = $isDebug;
+        $this->request = $requestStack->getCurrentRequest();
+        $this->requestContent = $this->requestContentInitial = $this->parseRequestContent($this->request);
+        $this->isDebug = $isDebug;
     }
 
     /**
      * Validates request body content against defined constraints in the $requestRule.
      * If all data is valid `process` method of the $requestRule and processors of every single field will be executed.
-     *
      *
      * @param SmartRequestRuleInterface $requestRule Request rule to comply with
      * @param bool                      $skipMissing Skip missing fields in the Request body content instead of
@@ -92,7 +90,7 @@ class SmartRequest
     {
         $this->requestRule = $requestRule;
 
-        $validationMap  = $this->requestRule->getValidationMap();
+        $validationMap = $this->requestRule->getValidationMap();
         $requestContent = $this->requestContent;
 
         if ($differ = array_diff_key($requestContent, $validationMap)) {
@@ -159,11 +157,11 @@ class SmartRequest
     }
 
     /**
-     * Validates the request parameters against a constraint or a list of constraints
+     * Validates the request parameters against a constraint or a list of constraints.
      *
      * @param string                  $key         Request parameter key
      * @param Constraint|Constraint[] $constraints The constraint(s) to validate against
-     * @param null|mixed              $default     Default value if the Request parameter not found
+     * @param mixed|null              $default     Default value if the Request parameter not found
      *
      * @return mixed|null Validated value from the Request
      */
@@ -190,7 +188,7 @@ class SmartRequest
     }
 
     /**
-     * Adds a new entry to the request body content or replaces an existing one
+     * Adds a new entry to the request body content or replaces an existing one.
      *
      * @param string $key   A parameter key of the request body content to add or replace
      * @param mixed  $value A value for the selected key
@@ -263,7 +261,7 @@ class SmartRequest
     }
 
     /**
-     * Runs `process` method of the SmartRequestRule and processors for every single field if exists
+     * Runs `process` method of the SmartRequestRule and processors for every single field if exists.
      *
      * @return void
      */
@@ -278,12 +276,7 @@ class SmartRequest
                 $processor = $validationMap[$key]['processor'];
 
                 if (!is_callable($processor)) {
-                    throw new \InvalidArgumentException(
-                        sprintf(
-                            'The "processor" option must be a valid callable ("%s" given).',
-                            is_object($processor) ? get_class($processor) : gettype($processor)
-                        )
-                    );
+                    throw new \InvalidArgumentException(sprintf('The "processor" option must be a valid callable ("%s" given).', is_object($processor) ? get_class($processor) : gettype($processor)));
                 }
 
                 call_user_func($processor, $this);
@@ -292,7 +285,7 @@ class SmartRequest
     }
 
     /**
-     * Replaces the request parameter with the return value of the PHP callable
+     * Replaces the request parameter with the return value of the PHP callable.
      *
      * @return void
      */
@@ -305,12 +298,7 @@ class SmartRequest
                 $normalizer = $validationMap[$key]['normalizer'];
 
                 if (!is_callable($normalizer)) {
-                    throw new \InvalidArgumentException(
-                        sprintf(
-                            'The "normalizer" option must be a valid callable ("%s" given).',
-                            is_object($normalizer) ? get_class($normalizer) : gettype($normalizer)
-                        )
-                    );
+                    throw new \InvalidArgumentException(sprintf('The "normalizer" option must be a valid callable ("%s" given).', is_object($normalizer) ? get_class($normalizer) : gettype($normalizer)));
                 }
 
                 $this->requestContent[$key] = call_user_func($normalizer, $value);
@@ -318,15 +306,10 @@ class SmartRequest
         }
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return array
-     */
     private function parseRequestContent(Request $request): array
     {
         if ('json' !== $request->getContentType()) {
-            if ($request->getMethod() === 'GET') {
+            if ('GET' === $request->getMethod()) {
                 return $request->query->all();
             }
 
@@ -336,9 +319,7 @@ class SmartRequest
         $content = json_decode($request->getContent(), true);
 
         if (null === $content) {
-            throw new SmartProblemException(
-                new SmartProblem(400, 'invalid_body_format', 'Invalid JSON format sent.')
-            );
+            throw new SmartProblemException(new SmartProblem(400, 'invalid_body_format', 'Invalid JSON format sent.'));
         }
 
         return $content;

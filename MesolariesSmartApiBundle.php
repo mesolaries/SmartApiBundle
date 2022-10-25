@@ -12,7 +12,6 @@
 
 namespace Mesolaries\SmartApiBundle;
 
-
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**

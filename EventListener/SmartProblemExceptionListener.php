@@ -12,7 +12,6 @@
 
 namespace Mesolaries\SmartApiBundle\EventListener;
 
-
 use Mesolaries\SmartApiBundle\Exception\SmartProblemException;
 use Mesolaries\SmartApiBundle\Problem\SmartProblem;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -32,7 +31,7 @@ class SmartProblemExceptionListener implements EventSubscriberInterface
 
     public function __construct($debug, $pattern)
     {
-        $this->debug   = $debug;
+        $this->debug = $debug;
         $this->pattern = $pattern;
     }
 
@@ -40,9 +39,9 @@ class SmartProblemExceptionListener implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
-        if (null === $this->pattern || !preg_match('{' . $this->pattern . '}', rawurldecode($request->getPathInfo()))) {
-            if (false === mb_strpos((string)$request->getPreferredFormat(), 'json') &&
-                false === mb_strpos((string)$request->getContentType(), 'json')) {
+        if (null === $this->pattern || !preg_match('{'.$this->pattern.'}', rawurldecode($request->getPathInfo()))) {
+            if (false === mb_strpos((string) $request->getPreferredFormat(), 'json') &&
+                false === mb_strpos((string) $request->getContentType(), 'json')) {
                 return;
             }
         }
@@ -84,7 +83,7 @@ class SmartProblemExceptionListener implements EventSubscriberInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public static function getSubscribedEvents(): array
     {

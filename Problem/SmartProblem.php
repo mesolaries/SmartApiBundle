@@ -15,7 +15,7 @@ namespace Mesolaries\SmartApiBundle\Problem;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * RFC 7807 Problem details representation
+ * RFC 7807 Problem details representation.
  *
  * @author Emil Manafov <mnf.emil@gmail.com>
  */
@@ -41,20 +41,19 @@ class SmartProblem
     public function __construct(int $statusCode, ?string $type = null, ?string $title = null)
     {
         $this->statusCode = $statusCode;
-        $originalTitle    = $title;
+        $originalTitle = $title;
 
         if (null === $type) {
-            $type  = 'about:blank';
+            $type = 'about:blank';
             $title =
-                isset(Response::$statusTexts[$statusCode]) ? Response::$statusTexts[$statusCode]
-                    : 'Unknown status code :(';
+                Response::$statusTexts[$statusCode] ?? 'Unknown status code :(';
 
             if (null !== $originalTitle) {
                 $this->addExtraData('detail', $originalTitle);
             }
         }
 
-        $this->type  = $type;
+        $this->type = $type;
         $this->title = $title ?? '';
     }
 
@@ -74,10 +73,9 @@ class SmartProblem
     }
 
     /**
-     * Adds extra data to the object as key => value pair
+     * Adds extra data to the object as key => value pair.
      *
-     * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
      *
      * @return $this
      */
@@ -89,17 +87,15 @@ class SmartProblem
     }
 
     /**
-     * Transforms the object into an array
-     *
-     * @return array
+     * Transforms the object into an array.
      */
     public function normalize(): array
     {
         return array_merge(
             [
                 'status' => $this->statusCode,
-                'type'   => $this->type,
-                'title'  => $this->title,
+                'type' => $this->type,
+                'title' => $this->title,
             ],
             $this->extraData
         );

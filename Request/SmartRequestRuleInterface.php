@@ -21,16 +21,12 @@ interface SmartRequestRuleInterface
 {
     /**
      * Returns an array of request body content field mapping.
-     *
-     * @return array
      */
     public function getValidationMap(): array;
 
     /**
      * Runs every time after validation succeeded.
      * Implementation of this method is optional.
-     *
-     * @param SmartRequest $smartRequest
      *
      * @return mixed
      */

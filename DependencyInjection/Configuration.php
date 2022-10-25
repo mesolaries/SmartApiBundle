@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Mesolaries\SmartApiBundle\DependencyInjection;
-
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -10,7 +8,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 class Configuration implements ConfigurationInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getConfigTreeBuilder(): TreeBuilder
     {
@@ -18,11 +16,11 @@ class Configuration implements ConfigurationInterface
 
         $treeBuilder->getRootNode()
             ->children()
-                ->arrayNode('smart_problem')->addDefaultsIfNotSet()
-                    ->children()
-                        ->scalarNode('pattern')->defaultNull()->example('^/api')->end()
-                    ->end()
-                ->end()
+            ->arrayNode('smart_problem')->addDefaultsIfNotSet()
+            ->children()
+            ->scalarNode('pattern')->defaultNull()->example('^/api')->end()
+            ->end()
+            ->end()
             ->end()
         ;
 

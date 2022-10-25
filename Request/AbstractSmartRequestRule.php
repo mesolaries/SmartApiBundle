@@ -20,7 +20,7 @@ namespace Mesolaries\SmartApiBundle\Request;
 abstract class AbstractSmartRequestRule implements SmartRequestRuleInterface
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function process(SmartRequest $smartRequest)
     {
